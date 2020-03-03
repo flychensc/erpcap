@@ -5,17 +5,19 @@ typedef unsigned char byte;
 
 struct erpcap_memory
 {
-	unsigned int size;
+	unsigned int size;	// memory size
 	void *mem;
+
+	unsigned int data_len;	// valid data length
 };
 
 enum erpcap_cmd_e
 {
-	erpcap_cmd_exit,
-	erpcap_cmd_list,
-	erpcap_cmd_listen,
-	erpcap_cmd_send,
-	erpcap_cmd_recv,
+	erpcap_cmd_exit = 0,
+	erpcap_cmd_list = 1,
+	erpcap_cmd_listen = 2,
+	erpcap_cmd_send = 3,
+	erpcap_cmd_recv = 4,
 
 	erpcap_cmd_last
 };
