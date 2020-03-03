@@ -1,3 +1,8 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/c_src"
+    "cmake.sourceDirectory": "${workspaceFolder}/c_src",
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "cmake.configureOnOpen": true,
+    "files.associations": {
+        "erpcap_comm.h": "c"
+    }
 }

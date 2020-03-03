@@ -1,6 +1,14 @@
 ﻿#ifndef _ERPCAP_H_
 #define _ERPCAP_H_
 
+typedef unsigned char byte;
+
+struct erpcap_memory
+{
+	unsigned int size;
+	void *mem;
+};
+
 enum erpcap_cmd_e
 {
 	erpcap_cmd_exit,
