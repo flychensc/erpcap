@@ -3,6 +3,7 @@
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
     "cmake.configureOnOpen": true,
     "files.associations": {
-        "erpcap_comm.h": "c"
+        "erpcap_comm.h": "c",
+        "stdio.h": "c"
     }
 }
