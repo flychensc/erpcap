@@ -20,7 +20,7 @@ BOOL LoadNpcapDlls()
 }
 #endif
 
-int list_if(char* buf)
+int list_if(struct erpcap_memory *chunk)
 {
 	pcap_if_t *alldevs;
 	pcap_if_t *d;
@@ -37,11 +37,11 @@ int list_if(char* buf)
 	/* Print the list */
 	for(d=alldevs; d; d=d->next)
 	{
-		printf("%d. %s", ++i, d->name);
+		write_memory(d->name, strlen(d->name), chunk);
 		if (d->description)
-			printf(" (%s)\n", d->description);
+			write_memory(d->description, strlen(d->description), chunk);
 		else
-			printf(" (No description available)\n");
+			write_memory("No description available", strlen("No description available"), chunk);
 	}
 	
 	/* At this point, we don't need any more the device list. Free it */
