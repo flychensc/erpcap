@@ -5,9 +5,9 @@
 /* [read|write]_exact are used since they may return
 * BEFORE all bytes have been transmitted
 */
-static int read_exact(byte* buf, unsigned int len)
+static int read_exact(byte* buf, size_t len)
 {
-    unsigned int i, got = 0;
+    int i, got = 0;
 
     do {
         if ((i = _read(0, buf + got, len - got)) <= 0)
@@ -18,9 +18,9 @@ static int read_exact(byte* buf, unsigned int len)
     return(got);
 }
 
-static int write_exact(byte* buf, unsigned int len)
+static int write_exact(byte* buf, size_t len)
 {
-    unsigned int i, wrote = 0;
+    int i, wrote = 0;
 
     do {
         if ((i = _write(1, buf + wrote, len - wrote)) <= 0)

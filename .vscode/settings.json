@@ -4,6 +4,7 @@
     "cmake.configureOnOpen": true,
     "files.associations": {
         "erpcap_comm.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "string.h": "c"
     }
 }

@@ -5,11 +5,12 @@
 #include <string.h>
 #include "erpcap.h"
 #include "erpcap_comm.h"
+#include "erpcap_drv.h"
 #include <stdlib.h>
 
-int write_memory(byte* buf, unsigned int len, struct erpcap_memory *chunk)
+size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk)
 {
-    unsigned int realsize = chunk->data_len + len;
+    size_t realsize = chunk->data_len + len;
     byte *blank;
 
     if (realsize > chunk->size) {
@@ -50,15 +51,26 @@ int main(int argc, char** argv)
 
         switch(msg->cmd) {
             case erpcap_cmd_list:
-                if(list_if(&chunk) < 0) {
+            {
+                if (list_if(&chunk) < 0) {
                     goto _abort;
                 }
                 if(write_cmd(&chunk) <= 0) {
                     goto _abort;
                 }
                 break;
+            }
             case erpcap_cmd_listen:
+            {
+                struct erpcap_msg_bindif_s *bind_msg = (struct erpcap_msg_bindif_s *)chunk.mem;;
+                if (listen_if(bind_msg->name, &chunk) < 0) {
+                    goto _abort;
+                }
+                if(write_cmd(&chunk) <= 0) {
+                    goto _abort;
+                }
                 break;
+            }
             case erpcap_cmd_send:
                 break;
             case erpcap_cmd_exit:

@@ -1,8 +1,8 @@
-#include <pcap.h>
 #include <stdio.h>
+#include "erpcap_drv.h"
+
 #ifdef WIN32
-#include <tchar.h>
-BOOL LoadNpcapDlls()
+BOOL LoadNpcapDlls(void)
 {
 	_TCHAR npcap_dir[512];
 	UINT len;
@@ -46,5 +46,25 @@ int list_if(struct erpcap_memory *chunk)
 	
 	/* At this point, we don't need any more the device list. Free it */
 	pcap_freealldevs(alldevs);
+	return 0;
+}
+
+int listen_if(unsigned char* name, struct erpcap_memory *chunk)
+{
+	pcap_t *adhandle;
+	char errbuf[PCAP_ERRBUF_SIZE];
+	
+	if ((adhandle= pcap_open_live(name,		// name of the device
+							 65536,			// portion of the packet to capture. 
+											// 65536 grants that the whole packet will be captured on all the MACs.
+							 1,				// promiscuous mode (nonzero means promiscuous)
+							 1000,			// read timeout
+							 errbuf			// error buffer
+							 )) == NULL)
+	{
+		fprintf(stderr,"\nUnable to open the adapter. %s is not supported by Npcap\n", name);
+		return -1;
+	}
+	write_memory("ok", strlen("ok"), chunk);
 	return 0;
 }

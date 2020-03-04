@@ -5,10 +5,10 @@ typedef unsigned char byte;
 
 struct erpcap_memory
 {
-	unsigned int size;	// memory size
+	size_t size;	// memory size
 	void *mem;
 
-	unsigned int data_len;	// valid data length
+	size_t data_len;	// valid data length
 };
 
 enum erpcap_cmd_e
@@ -37,7 +37,7 @@ struct erpcap_msg_iflist_s
 struct erpcap_msg_bindif_s
 {
 	enum erpcap_cmd_e cmd;
-	int if_id;
+	unsigned char name[0];
 };
 
 struct erpcap_msg_pkt_s
@@ -46,5 +46,7 @@ struct erpcap_msg_pkt_s
 	int pkt_len;
 	byte buf[0];
 };
+
+size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk);
 
 #endif
