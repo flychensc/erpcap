@@ -11,42 +11,32 @@ struct erpcap_memory
 	size_t data_len;	// valid data length
 };
 
-enum erpcap_cmd_e
-{
-	erpcap_cmd_exit = 0,
-	erpcap_cmd_list = 1,
-	erpcap_cmd_listen = 2,
-	erpcap_cmd_send = 3,
-	erpcap_cmd_recv = 4,
-
-	erpcap_cmd_last
-};
-
-struct erpcap_msg_base_s
-{
-	enum erpcap_cmd_e cmd;
-};
-
-struct erpcap_msg_iflist_s
-{
-	enum erpcap_cmd_e cmd;
-	int msg_len;
-	char msg[0];
-};
-
-struct erpcap_msg_bindif_s
-{
-	enum erpcap_cmd_e cmd;
-	unsigned char name[0];
-};
-
-struct erpcap_msg_pkt_s
-{
-	enum erpcap_cmd_e cmd;
-	int pkt_len;
-	byte buf[0];
-};
-
 size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk);
+
+/*
+Message send from erlang
+
+list interface:
+REQ_MSG
+
+bind interface:
+REQ_MSG NAME
+
+send packet:
+PKT
+*/
+
+#define ERPCAP_REQ_MSG_LIST		1	// list interface
+#define ERPCAP_REQ_MSG_LISTEN 	2	// bind interface
+
+/*
+Message send to erlang
+
+interface list:
+COUNT [(NAME_LEN, NAME, DESC_LEN, DESC),]
+
+receive packet:
+PKT
+*/
 
 #endif

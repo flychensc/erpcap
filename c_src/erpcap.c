@@ -30,7 +30,7 @@ size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk)
 int main(int argc, char** argv)
 {
     struct erpcap_memory chunk;
-    struct erpcap_msg_base_s *msg;
+    byte *msg;
 
 #ifdef WIN32
 	/* Load Npcap and its functions. */
@@ -47,12 +47,12 @@ int main(int argc, char** argv)
         return(-1);
 
     while (read_cmd(&chunk) > 0) {
-        msg = (struct erpcap_msg_base_s *)chunk.mem;
+        msg = (byte *)chunk.mem;
 
-        switch(msg->cmd) {
-            case erpcap_cmd_list:
+        switch(*msg) {
+            case ERPCAP_REQ_MSG_LIST:
             {
-                if (list_if(&chunk) < 0) {
+                if (pcap_list(&chunk) < 0) {
                     goto _abort;
                 }
                 if(write_cmd(&chunk) <= 0) {
@@ -60,23 +60,25 @@ int main(int argc, char** argv)
                 }
                 break;
             }
-            case erpcap_cmd_listen:
+            case ERPCAP_REQ_MSG_LISTEN:
             {
-                struct erpcap_msg_bindif_s *bind_msg = (struct erpcap_msg_bindif_s *)chunk.mem;;
-                if (listen_if(bind_msg->name, &chunk) < 0) {
+                if (pcap_listen(msg+1) < 0) {
                     goto _abort;
                 }
                 if(write_cmd(&chunk) <= 0) {
                     goto _abort;
                 }
-                break;
+                goto _loop;
             }
-            case erpcap_cmd_send:
-                break;
-            case erpcap_cmd_exit:
+
             default:
                 goto _abort;
         }
+    }
+
+_loop:
+    while (read_cmd(&chunk) > 0) {
+        pcap_send(chunk.mem, chunk.data_len);
     }
 
 _abort:

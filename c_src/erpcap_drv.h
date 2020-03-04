@@ -9,8 +9,8 @@
 BOOL LoadNpcapDlls(void);
 #endif
 
-int list_if(struct erpcap_memory *chunk);
-int listen_if(unsigned char* name, struct erpcap_memory *chunk);
-int recv_packet(char* buf, int len);
-int send_packet(char* buf, int len);
+int pcap_list(struct erpcap_memory *chunk);
+int pcap_listen(unsigned char* name);
+int pcap_send(byte* pkt, size_t len);
+
 #endif

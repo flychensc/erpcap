@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "erpcap_drv.h"
+#include "erpcap_comm.h"
 
 #ifdef WIN32
 BOOL LoadNpcapDlls(void)
@@ -20,7 +21,9 @@ BOOL LoadNpcapDlls(void)
 }
 #endif
 
-int list_if(struct erpcap_memory *chunk)
+static pcap_t *adhandle = NULL;
+
+int pcap_list(struct erpcap_memory *chunk)
 {
 	pcap_if_t *alldevs;
 	pcap_if_t *d;
@@ -49,9 +52,22 @@ int list_if(struct erpcap_memory *chunk)
 	return 0;
 }
 
-int listen_if(unsigned char* name, struct erpcap_memory *chunk)
+/* Callback function invoked by libpcap for every incoming packet */
+static void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data)
 {
-	pcap_t *adhandle;
+	struct erpcap_memory chunk;
+
+	// header->ts.tv_sec
+
+	chunk.size = header->len;
+	chunk.data_len = header->len;
+	chunk.mem = pkt_data;
+
+	write_cmd(&chunk);	
+}
+
+int pcap_listen(unsigned char* name)
+{
 	char errbuf[PCAP_ERRBUF_SIZE];
 	
 	if ((adhandle= pcap_open_live(name,		// name of the device
@@ -65,6 +81,25 @@ int listen_if(unsigned char* name, struct erpcap_memory *chunk)
 		fprintf(stderr,"\nUnable to open the adapter. %s is not supported by Npcap\n", name);
 		return -1;
 	}
-	write_memory("ok", strlen("ok"), chunk);
+	
+	/* start the capture */
+	pcap_loop(adhandle, 0, packet_handler, NULL);
+	
+	pcap_close(adhandle);
+	return 0;
+}
+
+int pcap_send(byte* pkt, size_t len)
+{
+	/* Send down the packet */
+	if (pcap_sendpacket(adhandle,	// Adapter
+		pkt,				// buffer with the packet
+		len					// size
+		) != 0)
+	{
+		fprintf(stderr,"\nError sending the packet: %s\n", pcap_geterr(adhandle));
+		return -1;
+	}
+
 	return 0;
 }
