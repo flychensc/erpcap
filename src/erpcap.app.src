@@ -8,7 +8,7 @@
     stdlib
    ]},
   {env,[]},
-  {modules, []},
+  {modules, [erpcap_app, erpcap_sup, erpcap_server]},
 
   {licenses, ["Apache 2.0"]},
   {links, []}

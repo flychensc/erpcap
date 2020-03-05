@@ -29,7 +29,9 @@ init([]) ->
     SupFlags = #{strategy => one_for_all,
                  intensity => 0,
                  period => 1},
-    ChildSpecs = [],
+    AChild = {erpcap_server, {erpcap_server, start, []},
+              permanent, 2000, worker, [erpcap_server]},
+    ChildSpecs = [AChild],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
