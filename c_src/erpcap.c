@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
     while (read_cmd(&chunk) > 0) {
         msg = (byte *)chunk.mem;
-        memcpy(&cmd, msg, sizeof(cmd));
+        cmd = msg[0];
 
         switch(cmd) {
             case ERPCAP_REQ_MSG_LIST:
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
             }
             case ERPCAP_REQ_MSG_LISTEN:
             {
-                if (pcap_listen(msg+sizeof(cmd)) < 0) {
+                if (pcap_listen(msg+1) < 0) {
                     fprintf(stderr, "Couldn't open interface\n");
                     goto _abort;
                 }
