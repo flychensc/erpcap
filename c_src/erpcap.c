@@ -44,7 +44,10 @@ int main(int argc, char** argv)
     chunk.size = 2048;
     chunk.mem = malloc(chunk.size);
     if (!chunk.mem)
+    {
+        fprintf(stderr, "Couldn't alloc memory\n");
         return(-1);
+    }
 
     while (read_cmd(&chunk) > 0) {
         msg = (byte *)chunk.mem;
@@ -53,9 +56,11 @@ int main(int argc, char** argv)
             case ERPCAP_REQ_MSG_LIST:
             {
                 if (pcap_list(&chunk) < 0) {
+                    fprintf(stderr, "Couldn't list interface\n");
                     goto _abort;
                 }
                 if(write_cmd(&chunk) <= 0) {
+                    fprintf(stderr, "Couldn't write stdout\n");
                     goto _abort;
                 }
                 break;
@@ -63,15 +68,18 @@ int main(int argc, char** argv)
             case ERPCAP_REQ_MSG_LISTEN:
             {
                 if (pcap_listen(msg+1) < 0) {
+                    fprintf(stderr, "Couldn't open interface\n");
                     goto _abort;
                 }
                 if(write_cmd(&chunk) <= 0) {
+                    fprintf(stderr, "Couldn't write stdout\n");
                     goto _abort;
                 }
                 goto _loop;
             }
 
             default:
+                fprintf(stderr, "Unknown command\n");
                 goto _abort;
         }
     }

@@ -37,6 +37,13 @@ int pcap_list(struct erpcap_memory *chunk)
 		return (-1);
 	}
 	
+	/* Count */
+	for(d=alldevs; d; d=d->next)
+	{
+		i++;
+	}
+	write_memory(&i, sizeof(i), chunk);
+	
 	/* Print the list */
 	for(d=alldevs; d; d=d->next)
 	{
