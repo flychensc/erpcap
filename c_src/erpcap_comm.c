@@ -10,7 +10,7 @@ static int read_exact(byte* buf, size_t len)
     int i, got = 0;
 
     do {
-        if ((i = _read(0, buf + got, len - got)) <= 0)
+        if ((i = _read(0, buf + got, (int)len - got)) <= 0)
             return(i);
         got += i;
     } while (got < len);
@@ -23,7 +23,7 @@ static int write_exact(byte* buf, size_t len)
     int i, wrote = 0;
 
     do {
-        if ((i = _write(1, buf + wrote, len - wrote)) <= 0)
+        if ((i = _write(1, buf + wrote, (int)len - wrote)) <= 0)
             return (i);
         wrote += i;
     } while (wrote < len);

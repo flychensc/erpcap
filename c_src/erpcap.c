@@ -31,6 +31,7 @@ int main(int argc, char** argv)
 {
     struct erpcap_memory chunk;
     byte *msg;
+    long cmd;
 
 #ifdef WIN32
     SetConsoleCtrlHandler(ConsoleHandler, TRUE);
@@ -53,8 +54,9 @@ int main(int argc, char** argv)
 
     while (read_cmd(&chunk) > 0) {
         msg = (byte *)chunk.mem;
+        memcpy(&cmd, msg, sizeof(cmd));
 
-        switch(*msg) {
+        switch(cmd) {
             case ERPCAP_REQ_MSG_LIST:
             {
                 if (pcap_list(&chunk) < 0) {
@@ -69,7 +71,7 @@ int main(int argc, char** argv)
             }
             case ERPCAP_REQ_MSG_LISTEN:
             {
-                if (pcap_listen(msg+1) < 0) {
+                if (pcap_listen(msg+sizeof(cmd)) < 0) {
                     fprintf(stderr, "Couldn't open interface\n");
                     goto _abort;
                 }

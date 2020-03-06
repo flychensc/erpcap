@@ -11,6 +11,8 @@ BOOL WINAPI ConsoleHandler(DWORD dwCtrlType)
 		pcap_close(adhandle);
 		adhandle = NULL;
 	}
+
+	return TRUE;
 }
 
 BOOL LoadNpcapDlls(void)
@@ -50,7 +52,7 @@ int pcap_list(struct erpcap_memory *chunk)
 	{
 		i++;
 	}
-	write_memory(&i, sizeof(i), chunk);
+	write_memory((byte *)&i, sizeof(i), chunk);
 	
 	/* Print the list */
 	for(d=alldevs; d; d=d->next)
@@ -68,7 +70,7 @@ int pcap_list(struct erpcap_memory *chunk)
 }
 
 /* Callback function invoked by libpcap for every incoming packet */
-static void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data)
+static void packet_handler(u_char *param, const struct pcap_pkthdr *header, u_char *pkt_data)
 {
 	struct erpcap_memory chunk;
 
@@ -98,7 +100,7 @@ int pcap_listen(unsigned char* name)
 	}
 	
 	/* start the capture */
-	pcap_loop(adhandle, 0, packet_handler, NULL);
+	pcap_loop(adhandle, 0, (pcap_handler)packet_handler, NULL);
 	
 	if (NULL != adhandle) {
 		pcap_close(adhandle);
@@ -112,7 +114,7 @@ int pcap_send(byte* pkt, size_t len)
 	/* Send down the packet */
 	if (pcap_sendpacket(adhandle,	// Adapter
 		pkt,				// buffer with the packet
-		len					// size
+		(int)len					// size
 		) != 0)
 	{
 		fprintf(stderr,"\nError sending the packet: %s\n", pcap_geterr(adhandle));
