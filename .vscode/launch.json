@@ -9,7 +9,7 @@
             "type": "erlang",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-			"arguments": "-config erpcap -s erpcap_app",
+			"arguments": "-config erpcap -s erpcap",
 			"preLaunchTask": "rebar3 compile"
         }
     ]
