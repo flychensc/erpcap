@@ -6,6 +6,7 @@
 
 #ifdef WIN32
 #include <tchar.h>
+BOOL WINAPI ConsoleHandler(DWORD dwCtrlType);
 BOOL LoadNpcapDlls(void);
 #endif
 

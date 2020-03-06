@@ -2,7 +2,17 @@
 #include "erpcap_drv.h"
 #include "erpcap_comm.h"
 
+static pcap_t *adhandle = NULL;
+
 #ifdef WIN32
+BOOL WINAPI ConsoleHandler(DWORD dwCtrlType)
+{
+	if (NULL != adhandle) {
+		pcap_close(adhandle);
+		adhandle = NULL;
+	}
+}
+
 BOOL LoadNpcapDlls(void)
 {
 	_TCHAR npcap_dir[512];
@@ -20,8 +30,6 @@ BOOL LoadNpcapDlls(void)
 	return TRUE;
 }
 #endif
-
-static pcap_t *adhandle = NULL;
 
 int pcap_list(struct erpcap_memory *chunk)
 {
@@ -92,7 +100,10 @@ int pcap_listen(unsigned char* name)
 	/* start the capture */
 	pcap_loop(adhandle, 0, packet_handler, NULL);
 	
-	pcap_close(adhandle);
+	if (NULL != adhandle) {
+		pcap_close(adhandle);
+		adhandle = NULL;
+	}
 	return 0;
 }
 

@@ -33,6 +33,8 @@ int main(int argc, char** argv)
     byte *msg;
 
 #ifdef WIN32
+    SetConsoleCtrlHandler(ConsoleHandler, TRUE);
+
 	/* Load Npcap and its functions. */
 	if (!LoadNpcapDlls())
 	{
