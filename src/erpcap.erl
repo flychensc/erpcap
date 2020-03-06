@@ -4,8 +4,7 @@
 -export([start/0]).
 
 start() ->
-    [{require, if_name, "IF_NAME"}],
-    IF_Name = ct:get_config(if_name),
+    IF_Name = application:get_env(erpcap, if_name),
     io:format("Interface Name:~w~n", [IF_Name]),
     Port = open_port({spawn, erpcap}, [{packet, 2}]),
     read_replies(Port).
