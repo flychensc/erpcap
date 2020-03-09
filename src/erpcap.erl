@@ -1,25 +1,18 @@
 
 -module(erpcap).
 
--export([start/0, stop/0, init/0]).
--export([list/0, open/1]).
+-export([start/0, stop/0, init/1]).
 -export([send/1]).
 
 -define(CMD_LISTIF, 1).
 -define(CMD_BINDIF, 2).
 
 start() ->
-    _Interface = application:get_env(erpcap, interface),
-    spawn(?MODULE, init, []).
+    Interface = application:get_env(erpcap, interface),
+    spawn(?MODULE, init, [Interface]).
 
 stop() ->
     erpcap ! stop.
-
-list() ->
-    call_port({list}).
-
-open(Interface) ->
-    call_port({open, Interface}).
 
 send(Packet) ->
     call_port({send, Packet}).
@@ -31,10 +24,10 @@ call_port(Msg) ->
             Result
     end.
 
-init() ->
+init(Interface) ->
     register(erpcap, self()),
     process_flag(trap_exit, true),
-    Port = open_port({spawn, erpcap}, [{packet, 2}]),
+    Port = open_port({spawn, 'erpcap -b Interface'}, [{packet, 2}]),
     loop(Port).
 
 loop(Port) ->
@@ -57,17 +50,8 @@ loop(Port) ->
             exit(port_terminated)
     end.
 
-encode({list}) -> [1];
-encode({open, Interface}) -> [2, Interface];
-encode({send, Packet}) -> [3, Packet].
+encode({send, Packet}) -> <<Packet>>.
 
-decode([1 | IfListMsg]) ->
-    io:format("IfListMsg ~w~n", [IfListMsg]),
-    IfListMsg;
-decode([Msg]) -> Msg.
-
-ifInfo(<NameLen, Rest)
-ifListMsg(<Count, Msg>) ->
-    
-deLenVal(<Len, Data>) ->
-    <Value/Len:binary, Rest> = Data,
+decode([Packet]) ->
+    io:format("Recv Packet ~w~n", [Packet]),
+    Packet.
