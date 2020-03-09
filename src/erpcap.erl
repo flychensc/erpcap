@@ -9,8 +9,7 @@
 -define(CMD_BINDIF, 2).
 
 start() ->
-    IF_Name = application:get_env(erpcap, if_name),
-    io:format("Interface Name:~w~n", [IF_Name]),
+    _Interface = application:get_env(erpcap, interface),
     spawn(?MODULE, init, []).
 
 stop() ->
@@ -54,6 +53,7 @@ loop(Port) ->
                     exit(normal)
             end;
         {'EXIT', Port, Reason} ->
+            io:format("exit b/z ~w~n", [Reason]),
             exit(port_terminated)
     end.
 
@@ -61,4 +61,13 @@ encode({list}) -> [1];
 encode({open, Interface}) -> [2, Interface];
 encode({send, Packet}) -> [3, Packet].
 
-decode([Int]) -> Int.
+decode([1 | IfListMsg]) ->
+    io:format("IfListMsg ~w~n", [IfListMsg]),
+    IfListMsg;
+decode([Msg]) -> Msg.
+
+ifInfo(<NameLen, Rest)
+ifListMsg(<Count, Msg>) ->
+    
+deLenVal(<Len, Data>) ->
+    <Value/Len:binary, Rest> = Data,
