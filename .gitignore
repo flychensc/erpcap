@@ -17,4 +17,6 @@ _build
 *.iml
 rebar3.crashdump
 *~
+
+# cmake
 build
