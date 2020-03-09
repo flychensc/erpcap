@@ -52,9 +52,9 @@ BOOL LoadNpcapDlls(void)
 #endif
 
 // Function prototypes
-void ifprint(pcap_if_t *d);
-char *iptos(u_long in);
-char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
+static void ifprint(pcap_if_t *d);
+static char *iptos(u_long in);
+static char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
 
 void iflist(void)
 {
@@ -81,7 +81,7 @@ void iflist(void)
 }
 
 /* Print all the available information on the given interface */
-void ifprint(pcap_if_t *d)
+static void ifprint(pcap_if_t *d)
 {
   pcap_addr_t *a;
   char ip6str[128];
@@ -132,7 +132,7 @@ void ifprint(pcap_if_t *d)
 
 /* From tcptraceroute, convert a numeric IP address to a string */
 #define IPTOSBUFFERS	12
-char *iptos(u_long in)
+static char *iptos(u_long in)
 {
 	static char output[IPTOSBUFFERS][3*4+3+1];
 	static short which;
@@ -145,7 +145,7 @@ char *iptos(u_long in)
 }
 
 #ifndef __MINGW32__ /* Cygnus doesn't have IPv6 */
-char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
+static char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
 {
 	socklen_t sockaddrlen;
 
@@ -171,18 +171,11 @@ char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
 /* Callback function invoked by libpcap for every incoming packet */
 static void packet_handler(u_char *param, const struct pcap_pkthdr *header, u_char *pkt_data)
 {
-	struct erpcap_memory chunk;
-
 	// header->ts.tv_sec
-
-	chunk.size = header->len;
-	chunk.data_len = header->len;
-	chunk.mem = pkt_data;
-
-	write_cmd(&chunk);	
+	write_cmd(pkt_data, header->len);	
 }
 
-int pcap_listen(unsigned char* name)
+int openif(unsigned char* name)
 {
 	char errbuf[PCAP_ERRBUF_SIZE];
 	
@@ -197,6 +190,8 @@ int pcap_listen(unsigned char* name)
 		fprintf(stderr,"\nUnable to open the adapter. %s is not supported by Npcap\n", name);
 		return -1;
 	}
+
+	// printf("\nlistening on %s...\n", d->description);
 	
 	/* start the capture */
 	pcap_loop(adhandle, 0, (pcap_handler)packet_handler, NULL);
@@ -205,15 +200,16 @@ int pcap_listen(unsigned char* name)
 		pcap_close(adhandle);
 		adhandle = NULL;
 	}
+
 	return 0;
 }
 
-int pcap_send(byte* pkt, size_t len)
+int sendpkt(byte* pkt, int len)
 {
 	/* Send down the packet */
 	if (pcap_sendpacket(adhandle,	// Adapter
-		pkt,				// buffer with the packet
-		(int)len					// size
+		pkt,						// buffer with the packet
+		len							// size
 		) != 0)
 	{
 		fprintf(stderr,"\nError sending the packet: %s\n", pcap_geterr(adhandle));

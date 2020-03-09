@@ -11,7 +11,7 @@ BOOL LoadNpcapDlls(void);
 #endif
 
 void iflist(void);
-int pcap_listen(unsigned char* name);
-int pcap_send(byte* pkt, size_t len);
+int openif(unsigned char* name);
+int sendpkt(byte* pkt, int len);
 
 #endif

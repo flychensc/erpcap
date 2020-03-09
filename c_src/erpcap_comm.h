@@ -4,9 +4,9 @@
 #include "erpcap.h"
 
 /* Read the 2 length bytes (MSB first), then the data. */
-int read_cmd(struct erpcap_memory *chunk);
+int read_cmd(byte *buf);
 
 /* Pack the 2 bytes length (MSB first) and send it */
-int write_cmd(struct erpcap_memory *chunk);
+int write_cmd(byte *buf, int len);
 
 #endif

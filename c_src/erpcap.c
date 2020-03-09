@@ -8,36 +8,17 @@
 #include "erpcap_drv.h"
 #include <stdlib.h>
 
-size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk)
-{
-    size_t realsize = chunk->data_len + len;
-    byte *blank;
+static byte _erpcap_send_pkt_buf[2048] = {0};
+static byte _erpcap_recv_pkt_buf[2048] = {0};
 
-    if (realsize > chunk->size) {
-        chunk->size = realsize;
-        chunk->mem = realloc(chunk->mem, chunk->size);
-        if (!chunk->mem)
-            return(-1);
-    }
-
-    blank = (byte *)chunk->mem + chunk->data_len;
-    memcpy(blank, buf, len);
-    chunk->data_len += len;
-
-    return len;
+static void printhelp(void) {
+    printf("\n-l                -- List all interfaces");
+    printf("\n-b INTERFACE_NAME -- Bind a interface");
 }
 
 int main(int argc, char** argv)
 {
-    struct erpcap_memory chunk;
-    byte *msg;
-    long cmd;
-
-    if(argc > 1) {
-		if(!strcmp(argv[1], "-l")) {
-			iflist();
-		}
-	}
+    int pkt_len;
 
 #ifdef WIN32
     SetConsoleCtrlHandler(ConsoleHandler, TRUE);
@@ -50,44 +31,27 @@ int main(int argc, char** argv)
 	}
 #endif
 
-    chunk.size = 2048;
-    chunk.mem = malloc(chunk.size);
-    if (!chunk.mem)
-    {
-        fprintf(stderr, "Couldn't alloc memory\n");
-        return(-1);
-    }
-
-    while (read_cmd(&chunk) > 0) {
-        msg = (byte *)chunk.mem;
-        cmd = msg[0];
-
-        switch(cmd) {
-            case ERPCAP_REQ_MSG_LISTEN:
-            {
-                if (pcap_listen(msg+1) < 0) {
-                    fprintf(stderr, "Couldn't open interface\n");
-                    goto _abort;
-                }
-                if(write_cmd(&chunk) <= 0) {
-                    fprintf(stderr, "Couldn't write stdout\n");
-                    goto _abort;
-                }
-                goto _loop;
-            }
-
-            default:
-                fprintf(stderr, "Unknown command\n");
-                goto _abort;
+    if (argc == 3) {
+        if (!strcmp(argv[1], "-b")) {
+			openif(argv[2]);
+		} else {
+            printhelp();
         }
+    } else if (argc == 1) {
+		if (!strcmp(argv[1], "-l")) {
+			iflist();
+            return(0);
+		} else {
+            printhelp();
+        }
+	} else {
+        printhelp();
     }
 
-_loop:
-    while (read_cmd(&chunk) > 0) {
-        pcap_send(chunk.mem, chunk.data_len);
+    while ( (pkt_len = read_cmd(_erpcap_send_pkt_buf)) > 0) {
+        // send
+        sendpkt(_erpcap_send_pkt_buf, pkt_len);
     }
 
-_abort:
-    free(chunk.mem);
-    return(-1);
+    return(0);
 }
