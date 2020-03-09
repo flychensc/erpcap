@@ -10,7 +10,7 @@ BOOL WINAPI ConsoleHandler(DWORD dwCtrlType);
 BOOL LoadNpcapDlls(void);
 #endif
 
-int pcap_list(struct erpcap_memory *chunk);
+void iflist(void);
 int pcap_listen(unsigned char* name);
 int pcap_send(byte* pkt, size_t len);
 

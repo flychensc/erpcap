@@ -11,6 +11,8 @@ link_directories("D:/flych/wsl/source/npcap-sdk-1.04/Lib")
 link_libraries("x64/Packet")
 link_libraries("x64/wpcap")
 
+link_libraries("Ws2_32.lib")
+
 # 将源代码添加到此项目的可执行文件。
 aux_source_directory(. SRC_LIST)
 

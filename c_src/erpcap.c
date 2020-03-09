@@ -33,6 +33,12 @@ int main(int argc, char** argv)
     byte *msg;
     long cmd;
 
+    if(argc > 1) {
+		if(!strcmp(argv[1], "-l")) {
+			iflist();
+		}
+	}
+
 #ifdef WIN32
     SetConsoleCtrlHandler(ConsoleHandler, TRUE);
 
@@ -57,18 +63,6 @@ int main(int argc, char** argv)
         cmd = msg[0];
 
         switch(cmd) {
-            case ERPCAP_REQ_MSG_LIST:
-            {
-                if (pcap_list(&chunk) < 0) {
-                    fprintf(stderr, "Couldn't list interface\n");
-                    goto _abort;
-                }
-                if(write_cmd(&chunk) <= 0) {
-                    fprintf(stderr, "Couldn't write stdout\n");
-                    goto _abort;
-                }
-                break;
-            }
             case ERPCAP_REQ_MSG_LISTEN:
             {
                 if (pcap_listen(msg+1) < 0) {

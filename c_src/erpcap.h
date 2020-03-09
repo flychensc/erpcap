@@ -16,17 +16,12 @@ size_t write_memory(byte* buf, size_t len, struct erpcap_memory *chunk);
 /*
 Message send from erlang
 
-list interface:
-REQ_MSG
-
 bind interface:
 REQ_MSG NAME
 
 send packet:
 PKT
 */
-
-#define ERPCAP_REQ_MSG_LIST		1	// list interface
 #define ERPCAP_REQ_MSG_LISTEN 	2	// bind interface
 
 /*
