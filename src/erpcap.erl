@@ -4,12 +4,9 @@
 -export([start/1, stop/0, init/1]).
 -export([send/1]).
 
--define(CMD_LISTIF, 1).
--define(CMD_BINDIF, 2).
-
-start([Interface]) ->
+start(Interface) ->
     % io:format("start erpcap on ~w~n", [Interface]),
-    spawn(?MODULE, init, [atom_to_list(Interface)]).
+    spawn(?MODULE, init, [Interface]).
 
 stop() ->
     erpcap ! stop.
@@ -27,7 +24,7 @@ call_port(Msg) ->
 init(Interface) ->
     register(erpcap, self()),
     process_flag(trap_exit, true),
-    Command = string:concat("erpcap -b ", Interface),
+    Command = unicode:characters_to_list("erpcap -b ", Interface),
     % io:format("Command:~s~n", [Command]),
     Port = open_port({spawn, Command}, [{packet, 2}]),
     loop(Port).

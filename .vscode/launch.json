@@ -9,7 +9,7 @@
             "type": "erlang",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-			"arguments": "-config erpcap -s erpcap start \\Device\\NPF_{97501407-6BF5-4D31-ADC4-5AFBD53A2192}",
+			"arguments": "-config erpcap -s erpcap_sample",
 			"preLaunchTask": "rebar3 compile"
         }
     ]
