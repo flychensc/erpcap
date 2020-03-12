@@ -2,7 +2,7 @@
 -module(erpcap).
 
 -export([start/1, stop/0, init/1]).
--export([send/1, reg_handle/1]).
+-export([send/1, reg_handler/1]).
 
 start(Interface) ->
     % io:format("start erpcap on ~w~n", [Interface]),
@@ -14,7 +14,7 @@ stop() ->
 send(Packet) ->
     erpcap ! {send, Packet}.
 
-reg_handle(Handler) ->
+reg_handler(Handler) ->
     erpcap ! {reg, Handler}.
 
 init(Interface) ->
@@ -29,7 +29,7 @@ loop(Port, RxHandlers) ->
     receive
         % receive packet
         {Port, {data, Data}} ->
-            handle_packet(Data, RxHandlers),
+            handle_packet(list_to_binary(Data), RxHandlers),
             loop(Port, RxHandlers);
         {send, Packet} ->
             Port ! {self(), {command, Packet}},
@@ -48,4 +48,5 @@ loop(Port, RxHandlers) ->
     end.
 
 handle_packet(Pkt, Handlers) ->
+    % io:format("recv ~w bytes~n", [byte_size(Pkt)]),
     lists:foreach(fun(Handler)-> Handler(Pkt) end, Handlers).
