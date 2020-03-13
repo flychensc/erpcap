@@ -14,7 +14,7 @@ static void printhelp(void) {
     printf("\n-l                -- List all interfaces");
     printf("\n-b INTERFACE_NAME -- Bind a interface");
     printf("\n-r INTERFACE_NAME -- Debug receive packet on a interface");
-    printf("\n");
+    printf("\n\n");
 }
 
 int main(int argc, char** argv)

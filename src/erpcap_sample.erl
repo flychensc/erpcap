@@ -20,8 +20,6 @@ send_arp() ->
                   16#00, 16#00, 16#00, 16#00,
                   16#00, 16#00, 16#00, 16#00>>).
 
-dump_l2(Packet) when byte_size(Packet) < 14 ->
-    io:format("Packet ~w too short ~n", [Packet]);
 dump_l2(Packet) ->
     <<Dst:6/binary, Src:6/binary, EthType:16/big-integer, Data/binary>> = Packet,
     io:format("L2 Header:~n"),
