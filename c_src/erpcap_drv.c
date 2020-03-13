@@ -204,6 +204,52 @@ int openif(unsigned char* name)
 	return 0;
 }
 
+/* Callback function invoked by libpcap for every incoming packet */
+static void packet_debug_handler(u_char *param, const struct pcap_pkthdr *header, u_char *pkt_data)
+{
+	byte *dst = pkt_data, *src = pkt_data+6;
+	unsigned short eth_type;
+
+	eth_type = (pkt_data[12] << 8) | pkt_data[13];
+	printf("\r\nPacket len:%d", header->len);
+	printf("\r\nCaptured len:%d", header->caplen);
+	printf("\r\nDstMac:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X", 
+		dst[0], dst[1], dst[2], dst[3], dst[4], dst[5]);
+	printf("\r\nSrcMac:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X", 
+		src[0], src[1], src[2], src[3], src[4], src[5]);
+	printf("\r\nEthType:0x%04X", eth_type);
+	printf("\r\n");
+}
+
+int openif_debug(unsigned char* name)
+{
+	char errbuf[PCAP_ERRBUF_SIZE];
+	
+	if ((adhandle= pcap_open_live(name,		// name of the device
+							 65536,			// portion of the packet to capture. 
+											// 65536 grants that the whole packet will be captured on all the MACs.
+							 1,				// promiscuous mode (nonzero means promiscuous)
+							 1000,			// read timeout
+							 errbuf			// error buffer
+							 )) == NULL)
+	{
+		fprintf(stderr,"\nUnable to open the adapter. %s is not supported by Npcap\n", name);
+		return -1;
+	}
+
+	// printf("\nlistening on %s...\n", d->description);
+	
+	/* start the capture */
+	pcap_loop(adhandle, 0, (pcap_handler)packet_debug_handler, NULL);
+	
+	if (NULL != adhandle) {
+		pcap_close(adhandle);
+		adhandle = NULL;
+	}
+
+	return 0;
+}
+
 int sendpkt(byte* pkt, int len)
 {
 	/* Send down the packet */
