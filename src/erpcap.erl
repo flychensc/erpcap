@@ -55,7 +55,9 @@ handle_info({_Port, {data, Data}}, State) ->
 handle_info(_Info, State) ->
    {noreply, State}.
 
-terminate(_Reason, _State) ->
+terminate(_Reason, State) ->
+    #state{port=Port} = State,
+    Port ! {self(), close},
    ok.
 
 code_change(_OldVsn, State, _Extra) ->
