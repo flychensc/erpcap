@@ -1,6 +1,7 @@
 #include "erpcap_comm.h"
 #include <stdlib.h>
 #include <io.h>
+#include <windows.h>
 
 /* [read|write]_exact are used since they may return
 * BEFORE all bytes have been transmitted
@@ -10,8 +11,8 @@ static int read_exact(byte* buf, int len)
     int i, got = 0;
 
     do {
-        if ((i = _read(0, buf + got, len - got)) <= 0)
-            return(i);
+        if (!ReadFile(STD_INPUT_HANDLE, buf + got, len - got, &i, NULL))
+            return(-1);
         got += i;
     } while (got < len);
 
@@ -23,8 +24,8 @@ static int write_exact(byte* buf, int len)
     int i, wrote = 0;
 
     do {
-        if ((i = _write(1, buf + wrote, len - wrote)) <= 0)
-            return (i);
+        if (!WriteFile(STD_OUTPUT_HANDLE, buf + wrote, len - wrote, &i, NULL))
+            return (-1);
         wrote += i;
     } while (wrote < len);
 
