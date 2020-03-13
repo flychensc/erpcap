@@ -9,7 +9,6 @@
 #include <stdlib.h>
 
 static byte _erpcap_send_pkt_buf[2048] = {0};
-static byte _erpcap_recv_pkt_buf[2048] = {0};
 
 static void printhelp(void) {
     printf("\n-l                -- List all interfaces");
