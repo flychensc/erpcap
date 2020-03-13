@@ -25,8 +25,10 @@ dump_l2(Packet) when byte_size(Packet) < 14 ->
 dump_l2(Packet) ->
     <<Dst:6/binary, Src:6/binary, EthType:16/big-integer, Data/binary>> = Packet,
     io:format("L2 Header:~n"),
-    io:format("  Destination:~.16B:~.16B:~.16B:~.16B:~.16B:~.16B~n", binary_to_list(Dst)),
-    io:format("  Source:~.16B:~.16B:~.16B:~.16B:~.16B:~.16B~n", binary_to_list(Src)),
+    io:format("  Destination:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B~n",
+            binary_to_list(Dst)),
+    io:format("  Source:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B:~2.16.0B~n",
+            binary_to_list(Src)),
     % len 4, hex, pad 0, e.g. 0x0800
     io:format("  EthType:0x~4.16.0B~n", [EthType]),
     io:format("  Data Length:~w~n", [byte_size(Data)]),
