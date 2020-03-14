@@ -20,10 +20,24 @@ send_arp() ->
     erpcap:send(<<16#FF, 16#FF, 16#FF, 16#FF, 16#FF, 16#FF,
                   16#00, 16#01, 16#02, 16#03, 16#04, 16#05,
                   16#08, 16#06,
-                  16#00, 16#00, 16#00, 16#00,
-                  16#00, 16#00, 16#00, 16#00,
-                  16#00, 16#00, 16#00, 16#00,
-                  16#00, 16#00, 16#00, 16#00>>).
+                  % Hardware Type
+                  16#00, 16#01,
+                  % Protocol Type 
+                  16#80, 16#00,
+                  % Hardware Size
+                  16#06,
+                  % Protocol Size
+                  16#04,
+                  % Opcode
+                  16#00, 16#01,
+                  % Sender MAC Address
+                  16#00, 16#01, 16#02, 16#03, 16#04, 16#05,
+                  % Sender IP Address
+                  16#01, 16#01, 16#01, 16#01,
+                  % Target MAC Address
+                  16#00, 16#00, 16#00, 16#00, 16#00, 16#00,
+                  % Target IP Address
+                  16#01, 16#01, 16#01, 16#02>>).
 
 dump_l2(Packet) ->
     <<Dst:6/binary, Src:6/binary, EthType:16/big-integer, Data/binary>> = Packet,
