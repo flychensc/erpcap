@@ -1,7 +1,7 @@
 erpcap
 =====
 
-An OTP library
+An erlang/OTP library
 
 The `erpcap` library is used to capture packets from NIC on Windows.
 
@@ -45,7 +45,17 @@ Usage
 
 4. Register RX handler via `erpcap:reg_handler(Handler).`
 
+Dependency
+------
+Npcap: Windows Packet Capture Library & Driver
+
 Sample
 ------
 
 Refer to [erpcap_sample.erl](src/erpcap_sample.erl)
+
+Send packet out
+![Send Packet](doc/send.jpg)
+
+Capture packets
+![Recv Packet](doc/capture.jpg)
