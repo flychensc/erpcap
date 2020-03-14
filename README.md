@@ -49,4 +49,4 @@ Usage
 Sample
 ------
 
-Refer to [erpcap_sample.erl](.src/erpcap_sample.erl)
+Refer to [erpcap_sample.erl](src/erpcap_sample.erl)
