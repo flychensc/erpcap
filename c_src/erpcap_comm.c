@@ -10,7 +10,7 @@ static int read_exact(byte* buf, int len)
     int i, got = 0;
 
     do {
-        if (!ReadFile(STD_INPUT_HANDLE, buf + got, len - got, &i, NULL))
+        if (!ReadFile(GetStdHandle(STD_INPUT_HANDLE), buf + got, len - got, &i, NULL))
             return(-1);
         got += i;
     } while (got < len);
@@ -23,7 +23,7 @@ static int write_exact(byte* buf, int len)
     int i, wrote = 0;
 
     do {
-        if (!WriteFile(STD_OUTPUT_HANDLE, buf + wrote, len - wrote, &i, NULL))
+        if (!WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), buf + wrote, len - wrote, &i, NULL))
             return (-1);
         wrote += i;
     } while (wrote < len);
