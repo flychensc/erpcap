@@ -13,7 +13,6 @@ static byte _erpcap_send_pkt_buf[2048] = {0};
 static void printhelp(void) {
     printf("\n-l                -- List all interfaces");
     printf("\n-b INTERFACE_NAME -- Bind a interface");
-    printf("\n-r INTERFACE_NAME -- Debug receive packet on a interface");
     printf("\n\n");
 }
 
@@ -36,11 +35,6 @@ int main(int argc, char** argv)
         if (!strcmp(argv[1], "-b")) {
 			if(openif(argv[2]) == 0) {
                 goto _main_loop;
-            }
-		}
-        if (!strcmp(argv[1], "-r")) {
-			if(openif_debug(argv[2]) == 0) {
-                return(0);
             }
 		}
     } else if (argc == 2) {

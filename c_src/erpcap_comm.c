@@ -1,8 +1,7 @@
 #include "erpcap_comm.h"
-#include <stdlib.h>
-#include <io.h>
-#include <windows.h>
 
+#ifdef WIN32
+#include <windows.h>
 /* [read|write]_exact are used since they may return
 * BEFORE all bytes have been transmitted
 */
@@ -31,7 +30,7 @@ static int write_exact(byte* buf, int len)
 
     return (len);
 }
-
+#endif
 /* Read the 2 length bytes (MSB first), then the data. */
 int read_cmd(byte *buf)
 {
