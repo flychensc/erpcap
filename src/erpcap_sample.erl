@@ -1,13 +1,18 @@
+%%% A sample to use erpcap send/capture packets
 
 -module(erpcap_sample).
 
 -export([start/0, stop/0]).
 
+%% start sample, send a packet out, and capture packets
+-spec start() -> ok.
 start() ->
     erpcap:start("\\Device\\NPF_{97501407-6BF5-4D31-ADC4-5AFBD53A2192}"),
     send_arp(),
     erpcap:reg_handler(fun(Pkt)-> dump_l2(Pkt) end).
 
+%% stop sample
+-spec stop() -> ok.
 stop() ->
     erpcap:stop().
 

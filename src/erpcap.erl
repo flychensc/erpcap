@@ -1,3 +1,4 @@
+%%% erpcap is used to capture/send packets on a interface
 
 -module(erpcap).
 
@@ -9,15 +10,23 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 -record(state, {port, handlers}).
 
+%% Start erpcap on a interface
+-spec start(string()) -> {ok, pid()}.
 start(Interface) ->
    gen_server:start_link({local, ?MODULE}, ?MODULE, Interface, []).
 
+%% Stop erpcap
+-spec stop() -> ok.
 stop() ->
    gen_server:call(?MODULE, stop).
 
+%% Send a packet out
+-spec send(binary()) -> ok.
 send(Packet) ->
     gen_server:cast(?MODULE, {send, Packet}).
 
+%% Register a RX handler
+-spec reg_handler(function()) -> ok.
 reg_handler(Handler) ->
     gen_server:cast(?MODULE, {reg, Handler}).
 
