@@ -7,13 +7,14 @@
 
 ## Erlang
 
-1. Install `otp_win64_22.2`
+1. Download erlang, e.g.: `otp_win64_22.2.exe`. Install it.
 2. Set erlang bin to path, e.g.: `D:\Program Files\erl10.6\bin`
 
 ## Rebar3
 
-1. Copy rebar3 binary into erlang bin folder
-2. create `rebar3.cmd` as following:
+1. Download `rebar3`
+2. Copy rebar3 binary into erlang bin folder
+3. Create `rebar3.cmd` as following:
 
     ```cmd
     @echo off
