@@ -25,10 +25,7 @@ static pcap_t *adhandle = NULL;
 #ifdef WIN32
 BOOL WINAPI ConsoleHandler(DWORD dwCtrlType)
 {
-	if (NULL != adhandle) {
-		pcap_close(adhandle);
-		adhandle = NULL;
-	}
+	closeif();
 
 	return TRUE;
 }
@@ -172,7 +169,7 @@ static char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
 static void packet_handler(u_char *param, const struct pcap_pkthdr *header, u_char *pkt_data)
 {
 	// header->ts.tv_sec
-	write_cmd(pkt_data, header->len);	
+	write_cmd(pkt_data, header->len);
 }
 
 int openif(unsigned char* name)
@@ -194,18 +191,26 @@ int openif(unsigned char* name)
 	// printf("\nlistening on %s...\n", d->description);
 	
 	/* start the capture */
-	pcap_loop(adhandle, 0, (pcap_handler)packet_handler, NULL);
-	
-	if (NULL != adhandle) {
-		pcap_close(adhandle);
-		adhandle = NULL;
-	}
+	pcap_dispatch(adhandle, 0, (pcap_handler)packet_handler, NULL);
 
 	return 0;
 }
 
+void closeif(void)
+{
+	if (NULL != adhandle) {
+		pcap_close(adhandle);
+		adhandle = NULL;
+	}
+}
+
 int sendpkt(byte* pkt, int len)
 {
+	if (!adhandle)
+	{
+		return -1;
+	}
+
 	/* Send down the packet */
 	if (pcap_sendpacket(adhandle,	// Adapter
 		pkt,						// buffer with the packet

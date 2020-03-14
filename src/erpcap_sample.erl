@@ -23,7 +23,7 @@ send_arp() ->
                   % Hardware Type
                   16#00, 16#01,
                   % Protocol Type 
-                  16#80, 16#00,
+                  16#08, 16#00,
                   % Hardware Size
                   16#06,
                   % Protocol Size

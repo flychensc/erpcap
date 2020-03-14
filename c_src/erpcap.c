@@ -53,5 +53,7 @@ _main_loop:
         sendpkt(_erpcap_send_pkt_buf, pkt_len);
     }
 
+    closeif();
+
     return(0);
 }

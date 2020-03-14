@@ -21,7 +21,6 @@ Usage
 
     -l                -- List all interfaces
     -b INTERFACE_NAME -- Bind a interface
-    -r INTERFACE_NAME -- Debug receive packet on a interface
 
     >erpcap.exe -l
 

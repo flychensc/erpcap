@@ -12,6 +12,7 @@ BOOL LoadNpcapDlls(void);
 
 void iflist(void);
 int openif(unsigned char* name);
+void closeif(void);
 int sendpkt(byte* pkt, int len);
 
 #endif
